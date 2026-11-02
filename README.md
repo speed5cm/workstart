@@ -68,7 +68,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 | 名字 | 解决什么 | 装法 | 指南 |
 |---|---|---|---|
-| `rtk` | 把冗长的 shell 输出（`git status`、`pnpm list`、`vitest`、`cargo test`…）改写成紧凑形式，每次调用都省 | `rtk init --agent pi --global` | [rtk](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md) |
+| `rtk` | 把冗长的 shell 输出（`git status`、`pnpm list`、`vitest`、`cargo test`…）改写成紧凑形式，125+ 命令；18 个 agent 都有一等支持 | `rtk init -g --agent pi`（Claude Code 省掉 `--agent`） | [rtk](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md) |
 
 > 每条指南开头都有一行 `Generic capability` / `This page's implementation`：第一行说它解决的通用问题，第二行说哪些部分是 Pi 的实现细节。**判断能不能跨 agent 用，看第二行就够。**
 
@@ -221,7 +221,7 @@ workstart/
 
 [rtk](https://github.com/rtk-ai/rtk) 透明地把冗长的 shell 命令（`git status`、`pnpm list`、`vitest`、`cargo test` 等）改写成节省 token 的紧凑形式。装上之后每次会话都被自动拦截改写 —— 工作流不变，token 变少。
 
-它只包 `bash` 那一层：`read` / `grep` / `find` / `ls`、`write`、`edit` 都不改写。
+它拦的是**shell 调用**这一层。agent 的内置工具（`Read`、`Grep`、`Glob`）不走 hook —— 想压缩那些，用 shell 的 `cat` / `rg` / `find`，或直接调 `rtk read` / `rtk grep` / `rtk find`。
 
 建议**全局安装**。把下面这段粘贴到 agent 会话：
 
