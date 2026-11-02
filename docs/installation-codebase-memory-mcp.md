@@ -38,7 +38,7 @@ In the project root, create `.pi/mcp-adapter.json` if it does not exist. If it a
 
 The relative path `.codebase-memory/cache` resolves against the project root when the MCP server starts there.
 
-Restart pi. Verify with `/mcp-adapter` — `codebase-memory-mcp` should be listed.
+Restart the agent. Verify with `/mcp-adapter` — `codebase-memory-mcp` should be listed.
 
 ## 3. Build the graph
 

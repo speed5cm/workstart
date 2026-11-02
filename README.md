@@ -70,7 +70,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 |---|---|---|---|
 | `rtk` | 把冗长的 shell 输出（`git status`、`pnpm list`、`vitest`、`cargo test`…）改写成紧凑形式，每次调用都省 | `rtk init --agent pi --global` | [rtk](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md) |
 
-> 每条指南开头都有一行 `Generic capability` / `This page's implementation`：第一行说它解决的通用问题，第二行说哪些部分是 Pi 的。**判断能不能跨 agent 用，看第二行就够。**
+> 每条指南开头都有一行 `Generic capability` / `This page's implementation`：第一行说它解决的通用问题，第二行说哪些部分是 Pi 的实现细节。**判断能不能跨 agent 用，看第二行就够。**
 
 ---
 
@@ -163,7 +163,7 @@ workstart/
 ## 如何让它为你所用
 
 1. **通读 `README.md`** —— 理解五层配置面，以及每个条目补的是哪一层。
-2. `workstart` 故意不附带任何配置。首次启动时，pi 会引导你设置 provider、model、theme。
+2. `workstart` 故意不附带任何配置。首次启动时，agent 会引导你设置 provider、model、theme —— 这一层不写进文档，交给你的 agent 自己完成。
 3. **先接 MCP** —— [exa、context7、searchcode](docs/installation.md) 是全局指令里那些"用 X 查文档"的落点。不接，`AGENTS.md` 里的话无从执行。这一层换 agent 只改配置文件位置，最值得先打通。
 4. **全局装 rtk** —— [rtk](docs/installation-rtk.md) 是清单里唯一值得无条件全局装的：它拦的是 shell 输出，每个项目都受益，没有副作用。装一次，所有会话都省。
 5. **按需装 skill，而且装项目级** —— [codegraph](docs/installation-codegraph.md) / [codebase-memory-mcp](docs/installation-codebase-memory-mcp.md) 看代码，[mattpocock/skills](docs/installation-matt-pocock-skills.md) 或 [superpowers](docs/installation-superpowers.md) 提供方法论，[OpenSpec](docs/installation-openspec.md) 走 spec-driven 开发，[caveman](docs/installation-caveman.md) 压缩 prose，[agent-browser](docs/installation-agent-browser.md) 控制浏览器。每个都只对你 `cd` 进去的项目生效。
@@ -199,7 +199,7 @@ workstart/
 
 **MCP 桥**（Step 2 的前置依赖）：
 
-- **pi-mcp-adapter** — 让 pi 能与 MCP 服务器通信的 adapter 包
+- **pi-mcp-adapter** — 让 agent 能与 MCP 服务器通信的 adapter 包
 
 **三个必装的 MCP 服务器**（Step 2）：
 
@@ -232,9 +232,9 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 ### caveman
 
-[caveman](https://github.com/juliusbrussee/caveman) 把 pi 的自然语言回复压缩约 65–75%，同时保留技术准确性。六个强度等级，由 `/caveman` 或 "caveman mode" / "less tokens" 等关键词触发。
+[caveman](https://github.com/juliusbrussee/caveman) 把 agent 的自然语言回复压缩约 65–75%，同时保留技术准确性。六个强度等级，由 `/caveman` 或 "caveman mode" / "less tokens" 等关键词触发。
 
-建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 pi：
+建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 agent 会话：
 
 ```
 Read the installation guide and follow it:
@@ -251,7 +251,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 [mattpocock/skills](https://github.com/mattpocock/skills) 是 Matt Pocock 整理的工程 skill 集——头脑风暴式的需求访谈、TDD、bug 诊断、代码审查、架构调研、issue 分流等等。按任务自动加载；部分 skill 还注册成 `/skill:<name>` 斜杠命令。定位是体量小、好改造、易组合。
 
-建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 pi：
+建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 agent 会话：
 
 ```
 Read the installation guide and follow it:
@@ -262,7 +262,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 [superpowers](https://github.com/obra/superpowers) 提供一套精选 skill，覆盖头脑风暴、调试、TDD、规划、代码审查等场景。按任务自动加载——装好之后无需手动调用。
 
-建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 pi：
+建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 agent 会话：
 
 ```
 Read the installation guide and follow it:
@@ -273,7 +273,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 [OpenSpec](https://github.com/Fission-AI/OpenSpec) 是 spec 驱动的开发工具，用于生成和管理项目规范。
 
-建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 pi：
+建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 agent 会话：
 
 ```
 Read the installation guide and follow it:
@@ -290,7 +290,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 [codegraph](https://github.com/colbymchenry/codegraph) 把代码库预先索引成知识图谱。agent 一次查询就能拿到精确上下文——调用链路、影响范围、相关符号——而不是逐个文件爬取。
 
-建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 pi：
+建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 agent 会话：
 
 ```
 Read the installation guide and follow it:
@@ -301,7 +301,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) 是独立的静态二进制，把代码库索引成持久化的 SQLite 知识图谱（支持 158 种语言、14 个 MCP 工具、毫秒级查询）。和 codegraph 类似，它让 agent 一次调用就能拿到结构化上下文。
 
-建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 pi：
+建议**项目级别安装**。先 `cd` 到项目目录，再把下面这段粘贴到 agent 会话：
 
 ```
 Read the installation guide and follow it:
@@ -312,9 +312,9 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 ## AGENTS.md
 
-AGENTS.md 是 pi 在每个会话里加载的全局指令文件 —— 五层里的第一层，也是最通用的一层。保持简短——只写真正跨项目都适用的内容。
+AGENTS.md 是 agent 在每个会话里加载的全局指令文件 —— 五层里的第一层，也是最通用的一层。保持简短——只写真正跨项目都适用的内容。
 
-pi 还会从 cwd 向上自动发现 `AGENTS.md` / `CLAUDE.md`，所以项目根的 `AGENTS.md` 会在该项目中覆盖全局。
+agent 还会从 cwd 向上自动发现 `AGENTS.md` / `CLAUDE.md`，所以项目根的 `AGENTS.md` 会在该项目中覆盖全局。
 
 **全局文件建议包含**：
 

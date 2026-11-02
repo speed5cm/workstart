@@ -8,7 +8,7 @@
 
 ## Install codegraph
 
-codegraph does not ship with a built-in pi agent target, so use the `opencode` target to generate the agent instructions, then clean up the leftover opencode config file:
+codegraph ships no built-in Pi target, so use the `opencode` target to generate the agent instructions, then clean up the leftover opencode config file:
 
 ```bash
 npx -y @colbymchenry/codegraph install -t opencode -l local -y
@@ -31,7 +31,7 @@ Then build the per-project graph:
 npx -y @colbymchenry/codegraph init
 ```
 
-All steps are required: `install` installs codegraph and updates `AGENTS.md`, deleting `opencode.jsonc` removes the unused opencode config, the `.pi/mcp-adapter.json` entry below connects codegraph to pi, and `init` builds the index. Without `init`, the MCP tools have nothing to query.
+All steps are required: `install` installs codegraph and updates `AGENTS.md`, deleting `opencode.jsonc` removes the unused opencode config, the `.pi/mcp-adapter.json` entry below connects codegraph to the agent, and `init` builds the index. Without `init`, the MCP tools have nothing to query.
 
 ## Configure MCP
 
@@ -48,15 +48,15 @@ Create `.pi/mcp-adapter.json` in the project root if it does not exist. If it al
 }
 ```
 
-Restart pi. Verify with `/mcp-adapter` — `codegraph` should be listed.
+Restart the agent. Verify with `/mcp-adapter` — `codegraph` should be listed.
 
 ## Verify
 
-In a pi session:
+In a fresh session:
 
 > "How does function X reach function Y?"
 
-pi should answer using the codegraph tools (you'll see it call `codegraph_explore`), returning call paths and source snippets rather than a series of `grep` results.
+The agent should answer using the codegraph tools (you'll see it call `codegraph_explore`), returning call paths and source snippets rather than a series of `grep` results.
 
 ## Recommendation: install at the project level
 
@@ -66,4 +66,4 @@ pi should answer using the codegraph tools (you'll see it call `codegraph_explor
 
 ## Scope
 
-codegraph only exposes graph-query tools. It does not modify pi's other MCP servers, model selection, or theme. The index is regenerated from source — add `.codegraph/` to your project's `.gitignore`.
+codegraph only exposes graph-query tools. It does not modify the agent's other MCP servers, model selection, or theme. The index is regenerated from source — add `.codegraph/` to your project's `.gitignore`.

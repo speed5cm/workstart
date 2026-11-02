@@ -20,7 +20,7 @@ which openspec || npm install -g @fission-ai/openspec@latest
 openspec init --tools pi
 ```
 
-This bootstraps OpenSpec in your project with pi tool integration. Skills land in `.pi/skills/openspec-*/` and slash commands in `.pi/prompts/opsx-*.md`.
+This bootstraps OpenSpec in your project with the selected tool integration. Skills land in `.pi/skills/openspec-*/` and slash commands in `.pi/prompts/opsx-*.md`.
 
 For interactive tool selection (also works):
 
@@ -32,7 +32,7 @@ openspec init
 
 ## Usage
 
-After init, these slash commands are available in any pi session:
+After init, these slash commands are available in any session:
 
 | Command | Purpose |
 |---|---|

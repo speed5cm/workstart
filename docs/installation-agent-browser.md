@@ -4,7 +4,7 @@
 >
 > **This page's implementation:** Pi (`.pi/skills/`). `--agent pi` is the only runtime-specific part; the skill body and the CDP workflow are neutral.
 
-> [agent-browser](https://github.com/vercel-labs/agent-browser) lets the pi agent control a browser via CDP (Chrome DevTools Protocol) — more token-efficient than traditional headless browser approaches.
+> [agent-browser](https://github.com/vercel-labs/agent-browser) lets the agent control a browser via CDP (Chrome DevTools Protocol) — more token-efficient than traditional headless browser approaches.
 
 ## Prerequisites
 
@@ -22,11 +22,11 @@ which agent-browser || npm i -g agent-browser && agent-browser install
 npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser --agent pi -y
 ```
 
-This installs the skill into the project's `.pi/skills/` directory.
+This installs the skill into the project's skill directory — with `--agent pi` that resolves to `.pi/skills/`.
 
 ## Usage
 
-In a pi session, the agent can now drive the browser via the `agent-browser` skill — open pages, click elements, fill forms, take screenshots, and read console / network output. Ask the agent to do something on a real browser and it will invoke the skill.
+In a fresh session, the agent can now drive the browser via the `agent-browser` skill — open pages, click elements, fill forms, take screenshots, and read console / network output. Ask the agent to do something on a real browser and it will invoke the skill.
 
 ## Recommendation: install at the project level
 

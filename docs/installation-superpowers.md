@@ -14,7 +14,7 @@
 pi install https://github.com/obra/superpowers
 ```
 
-This installs the skills + a small bootstrap extension into your pi session. Pi auto-discovers them on next startup.
+This installs the skills + a small bootstrap extension into your session. The agent auto-discovers them on next startup.
 
 ## Optional: subagent support
 
@@ -28,7 +28,7 @@ Skip if you only plan to use the lighter skills (brainstorming, TDD, planning).
 
 ## Usage
 
-Skills auto-load per task. pi decides which skill to invoke based on the user's request. You can also trigger explicitly with `/skill:<name>` once a session is running.
+Skills auto-load per task. The agent decides which skill to invoke based on the user's request. You can also trigger explicitly with `/skill:<name>` once a session is running.
 
 ## Recommendation: install at the project level
 
@@ -42,4 +42,4 @@ Global install loads superpowers on every session in every project, regardless o
 
 ## Scope
 
-Superpowers only changes **what pi knows** (skill content) and **how the bootstrap flows** (when skills are suggested). It does not modify pi's built-in tools, model selection, or theme.
+Superpowers only changes **what the agent knows** (skill content) and **how the bootstrap flows** (when skills are suggested). It does not modify the agent's built-in tools, model selection, or theme.

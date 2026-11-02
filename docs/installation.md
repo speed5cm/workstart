@@ -23,9 +23,9 @@ Then `pi --help` to confirm it works.
 
 ## Step 1: Install workstart
 
-workstart contains documentation only — no extensions, no settings, no skills. To preserve your existing pi files, clone the repository into a temporary directory and copy only files that do not already exist into `~/.pi/agent`.
+workstart contains documentation only — no extensions, no settings, no skills. To preserve your existing config files, clone the repository into a temporary directory and copy only files that do not already exist into `~/.pi/agent`.
 
-These commands are normally run from a separate terminal because they modify the pi configuration directory used by the current session.
+These commands are normally run from a separate terminal because they modify the configuration directory used by the current session.
 
 When this document is provided to an Agent with an explicit request to install workstart, the Agent may execute the commands automatically in the current session. Do not ask the user to confirm again. Do not move, delete, or replace `~/.pi/agent`; clone into a temporary directory and use `cp -an` so existing configuration files are preserved.
 
@@ -51,7 +51,7 @@ pi install npm:pi-mcp-adapter
 
 Then create or update `~/.pi/agent/mcp-adapter.json` with these entries. If the file already contains other MCP servers, preserve them and merge these entries into its existing `mcpServers` object; do not replace the whole file. If the entries already exist, keep the existing configuration and avoid duplicates. Create `mcp-adapter.json` only when it does not exist.
 
-> **Do not use `mcp.json` here.** `~/.pi/agent/mcp.json` belongs to Pi's built-in MCP support and is never read by `pi-mcp-adapter`. The adapter owns `mcp-adapter.json` (format unchanged, so an existing `mcp.json` can be `mv`'d into place). Keeping the two files separate is what stops Pi and the adapter from starting the same servers twice.
+> **Do not use `mcp.json` here.** `~/.pi/agent/mcp.json` belongs to Pi's built-in MCP support and is never read by `pi-mcp-adapter`. The adapter owns `mcp-adapter.json` (format unchanged, so an existing `mcp.json` can be `mv`'d into place). Keeping the two files separate is what stops the runtime and the adapter from starting the same servers twice.
 
 ```json
 {
@@ -70,9 +70,9 @@ Then create or update `~/.pi/agent/mcp-adapter.json` with these entries. If the 
 }
 ```
 
-> **Why `eager` for exa?** Web search is the first thing pi reaches for in fresh sessions — kicking off the connection at startup (rather than waiting for the first tool call) means search results are ready by the time pi actually needs them. The other two are `lazy` (default) since they only fire on explicit lookups.
+> **Why `eager` for exa?** Web search is the first thing an agent reaches for in fresh sessions — kicking off the connection at startup (rather than waiting for the first tool call) means search results are ready by the time the agent actually needs them. The other two are `lazy` (default) since they only fire on explicit lookups.
 
-If you already configured MCPs in Cursor / Claude Code / Codex, prefer `/mcp-adapter setup` (in any pi session) to import them rather than hand-writing `mcp-adapter.json`.
+If you already configured MCPs in Cursor / Claude Code / Codex, prefer `/mcp-adapter setup` (in any session) to import them rather than hand-writing `mcp-adapter.json`.
 
 ## Step 3: Configure Agent Instructions
 
@@ -95,7 +95,7 @@ Core install is done. The rest of this document is optional add-ons, grouped int
 - **Explore** — [codegraph](https://github.com/colbymchenry/codegraph), [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)
 - **Additional features** — [agent-browser](https://github.com/vercel-labs/agent-browser)
 
-Pick what fits your workflow, or skip straight to using pi.
+Pick what fits your workflow, or skip straight to using the agent.
 
 ⭐ **If workstart is useful to you, consider giving it a star!**
 
@@ -114,7 +114,7 @@ workstart is meant to be understood, not just installed.
 **Token saving:**
 
 - **[`docs/installation-rtk.md`](installation-rtk.md)** — rewrite verbose `bash` commands (global)
-- **[`docs/installation-caveman.md`](installation-caveman.md)** — compress pi's prose output
+- **[`docs/installation-caveman.md`](installation-caveman.md)** — compress the agent's prose output
 
 **Agentic workflow:**
 
@@ -131,4 +131,4 @@ workstart is meant to be understood, not just installed.
 
 - **[`docs/installation-agent-browser.md`](installation-agent-browser.md)** — browser automation via CDP
 
-Nothing here is required — pick what fits your workflow, or skip straight to using pi.
+Nothing here is required — pick what fits your workflow, or skip straight to using the agent.

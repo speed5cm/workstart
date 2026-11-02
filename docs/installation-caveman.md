@@ -14,7 +14,7 @@
 npx skills add https://github.com/juliusbrussee/caveman --skill caveman --agent pi -y
 ```
 
-This installs the skill into the project's `.pi/skills/` directory.
+This installs the skill into the project's skill directory — with `--agent pi` that resolves to `.pi/skills/`.
 
 ## Usage
 
