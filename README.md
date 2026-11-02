@@ -12,7 +12,7 @@
 
 ## 目录
 
-- [清单：MCP 与 skills](#清单mcp-与-skills)
+- [清单](#清单)
 - [设计理念](#设计理念)
 - [agent 的五层配置面](#agent-的五层配置面)
 - [快速开始](#快速开始)
@@ -27,7 +27,7 @@
 
 ---
 
-## 清单：MCP 与 skills
+## 清单
 
 这是索引层：**一条一个条目，一句话说清它解决什么，一个能直接发给 agent 的安装指南**。用法就一句——把某行的「指南」链接发给 agent：
 
@@ -62,6 +62,14 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 | `caveman` | 压缩输出，省 65–75% token | `npx skills add https://github.com/juliusbrussee/caveman --skill caveman --agent pi -y` | [caveman](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-caveman.md) |
 | `agent-browser` | 用 CDP 控制真实浏览器 | `npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser --agent pi -y` | [agent-browser](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-agent-browser.md) |
 
+### CLI 工具 —— 靠宿主的拦截点生效
+
+工具本身跟 agent 无关，但要让 agent「看见」改写后的输出，得挂在它的一个钩子上。`--agent` 选谁，就往谁的扩展机制里写一个壳；换 agent 是换个参数，不是重写。
+
+| 名字 | 解决什么 | 装法 | 指南 |
+|---|---|---|---|
+| `rtk` | 把冗长的 shell 输出（`git status`、`pnpm list`、`vitest`、`cargo test`…）改写成紧凑形式，每次调用都省 | `rtk init --agent pi --global` | [rtk](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md) |
+
 > 每条指南开头都有一行 `Generic capability` / `This page's implementation`：第一行说它解决的通用问题，第二行说哪些部分是 Pi 的。**判断能不能跨 agent 用，看第二行就够。**
 
 ---
@@ -94,7 +102,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 一条经验：**越靠上的层越通用，越靠下的层越绑 runtime。** 指令文件和 skill 换个 agent 基本照抄；扩展和会话格式通常得重写。
 
-**所以这张清单只收三样东西：指令文件（AGENTS.md 那一节）、skill、MCP。** 扩展层不进清单 —— 它写的是某个 TUI 的渲染和某个 runtime 的事件总线上，换个 agent 归零。不是它没用，是它只对当下这个 agent 有用。
+**所以这张清单只收三样东西：指令文件（AGENTS.md 那一节）、skill、MCP** —— 外加少数本身与 agent 无关、只需挂在宿主拦截点上的 CLI 工具（如 `rtk`）。扩展层不进清单 —— 它写的是某个 TUI 的渲染和某个 runtime 的事件总线上，换个 agent 归零。不是它没用，是它只对当下这个 agent 有用。
 
 ---
 
@@ -138,6 +146,7 @@ workstart/
 ├── README.md            ← 你正在阅读的这份
 └── docs/
     ├── installation.md        ← 安装 / 备份 / 升级，含三个必装 MCP
+    ├── installation-rtk.md    ← 可选：把 shell 输出改写成紧凑形式，省 token（全局）
     ├── installation-caveman.md   ← 可选：压缩 prose 输出，省 token（项目级）
     ├── installation-matt-pocock-skills.md   ← 可选：mattpocock/skills，写给真实工程师的 skill 集（项目级）
     ├── installation-superpowers.md  ← 可选：agentic workflow skills（项目级）
@@ -156,10 +165,11 @@ workstart/
 1. **通读 `README.md`** —— 理解五层配置面，以及每个条目补的是哪一层。
 2. `workstart` 故意不附带任何配置。首次启动时，pi 会引导你设置 provider、model、theme。
 3. **先接 MCP** —— [exa、context7、searchcode](docs/installation.md) 是全局指令里那些"用 X 查文档"的落点。不接，`AGENTS.md` 里的话无从执行。这一层换 agent 只改配置文件位置，最值得先打通。
-4. **按需装 skill，而且装项目级** —— [codegraph](docs/installation-codegraph.md) / [codebase-memory-mcp](docs/installation-codebase-memory-mcp.md) 看代码，[mattpocock/skills](docs/installation-matt-pocock-skills.md) 或 [superpowers](docs/installation-superpowers.md) 提供方法论，[OpenSpec](docs/installation-openspec.md) 走 spec-driven 开发，[caveman](docs/installation-caveman.md) 压缩 prose，[agent-browser](docs/installation-agent-browser.md) 控制浏览器。每个都只对你 `cd` 进去的项目生效。
-5. **修改全局 `AGENTS.md`** —— 加你的语言偏好、工作风格、跨项目都适用的 MCP 用法提示。这一层换 agent 几乎可以照抄，投资回报最高。
-6. **在需要 `AGENTS.md` 的项目根加一份** —— 写项目结构、技术栈、编码规范。
-7. **写自己的 prompt 模板** —— 把重复流程做成斜杠命令（Pi 的落点是 `.pi/prompts/`，别的 agent 换个目录）。
+4. **全局装 rtk** —— [rtk](docs/installation-rtk.md) 是清单里唯一值得无条件全局装的：它拦的是 shell 输出，每个项目都受益，没有副作用。装一次，所有会话都省。
+5. **按需装 skill，而且装项目级** —— [codegraph](docs/installation-codegraph.md) / [codebase-memory-mcp](docs/installation-codebase-memory-mcp.md) 看代码，[mattpocock/skills](docs/installation-matt-pocock-skills.md) 或 [superpowers](docs/installation-superpowers.md) 提供方法论，[OpenSpec](docs/installation-openspec.md) 走 spec-driven 开发，[caveman](docs/installation-caveman.md) 压缩 prose，[agent-browser](docs/installation-agent-browser.md) 控制浏览器。每个都只对你 `cd` 进去的项目生效。
+6. **修改全局 `AGENTS.md`** —— 加你的语言偏好、工作风格、跨项目都适用的 MCP 用法提示。这一层换 agent 几乎可以照抄，投资回报最高。
+7. **在需要 `AGENTS.md` 的项目根加一份** —— 写项目结构、技术栈、编码规范。
+8. **写自己的 prompt 模板** —— 把重复流程做成斜杠命令（Pi 的落点是 `.pi/prompts/`，别的 agent 换个目录）。
 
 用不到的，删掉。它是起点，不是框架。
 
@@ -205,7 +215,20 @@ workstart/
 
 ## 节省 token
 
-> 这一节是**最小的通用层**：不管哪个 agent，token 都是钱，压缩点的位置也就那么几个 —— 命令输出、自然语言输出、上下文窗口本身。取舍标准也一样：**压缩有副作用就按项目开关，没有副作用才全局装。**
+> 这一节是**最小的通用层**：不管哪个 agent，token 都是钱，压缩点的位置也就那么几个 —— 命令输出、自然语言输出。两个工具的取舍也一样：**压缩有副作用就按项目开关，没有副作用才全局装。**
+
+### rtk
+
+[rtk](https://github.com/rtk-ai/rtk) 透明地把冗长的 shell 命令（`git status`、`pnpm list`、`vitest`、`cargo test` 等）改写成节省 token 的紧凑形式。装上之后每次会话都被自动拦截改写 —— 工作流不变，token 变少。
+
+它只包 `bash` 那一层：`read` / `grep` / `find` / `ls`、`write`、`edit` 都不改写。
+
+建议**全局安装**。把下面这段粘贴到 agent 会话：
+
+```
+Read the installation guide and follow it:
+https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md
+```
 
 ### caveman
 

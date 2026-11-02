@@ -90,7 +90,7 @@ Create `~/.pi/agent/AGENTS.md` with the following MCP instructions. If `AGENTS.m
 
 Core install is done. The rest of this document is optional add-ons, grouped into four categories:
 
-- **Token saving** — [caveman](https://github.com/JuliusBrussee/caveman)
+- **Token saving** — [rtk](https://github.com/rtk-ai/rtk), [caveman](https://github.com/JuliusBrussee/caveman)
 - **Agentic workflow** — [superpowers](https://github.com/obra/superpowers), [OpenSpec](https://github.com/Fission-AI/OpenSpec), [mattpocock/skills](https://github.com/mattpocock/skills)
 - **Explore** — [codegraph](https://github.com/colbymchenry/codegraph), [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)
 - **Additional features** — [agent-browser](https://github.com/vercel-labs/agent-browser)
@@ -113,6 +113,7 @@ workstart is meant to be understood, not just installed.
 
 **Token saving:**
 
+- **[`docs/installation-rtk.md`](installation-rtk.md)** — rewrite verbose `bash` commands (global)
 - **[`docs/installation-caveman.md`](installation-caveman.md)** — compress pi's prose output
 
 **Agentic workflow:**
