@@ -68,7 +68,7 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 
 | 名字 | 解决什么 | 装法 | 指南 |
 |---|---|---|---|
-| `rtk` | 把冗长的 shell 输出（`git status`、`pnpm list`、`vitest`、`cargo test`…）改写成紧凑形式，125+ 命令；18 个 agent 都有一等支持 | `rtk init -g --agent pi`（Claude Code 省掉 `--agent`） | [rtk](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md) |
+| `rtk` | 把冗长的 shell 输出（`git status`、`pnpm list`、`vitest`、`cargo test`…）改写成紧凑形式，100+ 命令；18 个 agent 都有一等支持。v1 可再选装 proxy：压 provider 流量、把便宜调用路由到更便宜的模型 | `rtk init -g --agent pi`（Claude Code 省掉 `--agent`） | [rtk](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md) |
 
 > 每条指南开头都有一行 `Generic capability` / `This page's implementation`：第一行说它解决的通用问题，第二行说哪些部分是 Pi 的实现细节。**判断能不能跨 agent 用，看第二行就够。**
 
@@ -215,13 +215,18 @@ workstart/
 
 ## 节省 token
 
-> 这一节是**最小的通用层**：不管哪个 agent，token 都是钱，压缩点的位置也就那么几个 —— 命令输出、自然语言输出。两个工具的取舍也一样：**压缩有副作用就按项目开关，没有副作用才全局装。**
+> 这一节是**最小的通用层**：不管哪个 agent，token 都是钱，压缩点的位置也就那么几个 —— 命令输出、自然语言输出，以及（rtk v1 的 proxy 之后）provider 请求体本身。两个工具的取舍也一样：**压缩有副作用就按项目开关，没有副作用才全局装。**
 
 ### rtk
 
 [rtk](https://github.com/rtk-ai/rtk) 透明地把冗长的 shell 命令（`git status`、`pnpm list`、`vitest`、`cargo test` 等）改写成节省 token 的紧凑形式。装上之后每次会话都被自动拦截改写 —— 工作流不变，token 变少。
 
 它拦的是**shell 调用**这一层。agent 的内置工具（`Read`、`Grep`、`Glob`）不走 hook —— 想压缩那些，用 shell 的 `cat` / `rg` / `find`，或直接调 `rtk read` / `rtk grep` / `rtk find`。
+
+v1 之后还有两个可选项，都**不装也照常用**（没有 `pipeline.toml` 就是 `rtk:default`，行为和上面完全一样）：
+
+- **`pipeline.toml`** —— 把「哪些命令被改写、输出变成什么、proxy 压什么」从硬编码搬进一个可组合的配置文件（`~/.config/rtk/pipeline.toml`）。
+- **`rtk-proxy`** —— 独立守护进程，坐在 agent 和 provider 之间压请求体，并把 pipeline 判定为便宜的调用路由到更便宜的模型；用 agent 已有的凭证，省下的量一起计入 `rtk gain`。**是独立二进制、BUSL-1.1 许可**，`rtk-proxy-<target>` 单独发，主程序不链接它。主程序也有 `rtk-oss`（Apache-2.0，去掉压缩引擎）版本应对许可证审查。
 
 建议**全局安装**。把下面这段粘贴到 agent 会话：
 
