@@ -2,7 +2,7 @@
 
 > **Generic capability:** a curated engineering skill set (grilling interviews, TDD, debugging, review, triage) that loads per task. It is Markdown + a prompt discipline, not code bound to a runtime.
 >
-> **This page's implementation:** Pi. The `skills` CLI is runtime-neutral — `--agent pi` writes into `.pi/skills/`, omitting the flag installs for every supported agent, and it mirrors a copy into `.agents/skills/` for Agent-Skills-spec agents.
+> **This page's implementation:** the `skills` CLI, which is runtime-neutral. `--agent <name>` writes into that harness's project skill directory (`$SKILLS_DIR`), omitting the flag installs for every supported agent, and it mirrors a copy into `.agents/skills/` for Agent-Skills-spec agents.
 
 > [mattpocock/skills](https://github.com/mattpocock/skills) is a curated set of engineering skills ("Skills for Real Engineers") by Matt Pocock — grilling interviews, TDD, debugging, code review, architecture surveys, triage, and more. Skills auto-load per task; a few also register as `/skill:<name>` commands.
 
@@ -11,15 +11,15 @@
 `cd` into the project directory, then run:
 
 ```bash
-npx skills@latest add mattpocock/skills --agent pi -y
+npx skills@latest add mattpocock/skills -y
 ```
 
-The installer fetches the repo, lets you pick which skills to copy, and writes them to `.pi/skills/<name>/` in your project. It also drops a copy under `.agents/skills/` so other Agent-Skills-spec agents can see them.
+The installer fetches the repo, lets you pick which skills to copy, and writes them to the project's skill directory (`$SKILLS_DIR/<name>/`). It also drops a copy under `.agents/skills/` so other Agent-Skills-spec agents can see them.
 
 ### If you'd rather pick interactively (no `-y`)
 
 ```bash
-npx skills@latest add mattpocock/skills --agent pi
+npx skills@latest add mattpocock/skills
 ```
 
 Then select the skills you want from the multi-select prompt.
@@ -28,7 +28,7 @@ Then select the skills you want from the multi-select prompt.
 
 | Flag | Purpose |
 |---|---|
-| `--agent pi` | Target pi (writes to `.pi/skills/`). Omit to install for every supported agent. |
+| `--agent <name>` | Target one harness — `claude-code`, `codex`, `cursor`, `opencode`, `github-copilot` — writing to its project skill directory. Omit to install for every supported agent. |
 | `--skill <name>` | Install one specific skill. Repeat to install several. Use `'*'` for all. |
 | `-y, --yes` | Skip prompts (non-interactive). |
 | `--list` | List the skills in the repo without installing. |
@@ -40,7 +40,7 @@ Examples:
 npx skills@latest add mattpocock/skills --list
 
 # Install only the setup wizard + a handful of day-to-day skills
-npx skills@latest add mattpocock/skills --agent pi --skill \
+npx skills@latest add mattpocock/skills --skill \
   setup-matt-pocock-skills \
   grill-me \
   tdd \
@@ -48,7 +48,7 @@ npx skills@latest add mattpocock/skills --agent pi --skill \
   triage
 
 # Install everything
-npx skills@latest add mattpocock/skills --agent pi --skill '*' -y
+npx skills@latest add mattpocock/skills --skill '*' -y
 ```
 
 ## One-time setup per repo
@@ -93,13 +93,13 @@ The full list is at [skills.sh/mattpocock/skills](https://skills.sh/mattpocock/s
 
 - Skills are scoped to the workflow of a specific repo (TDD on this codebase, triage of this repo's issues, architecture of this design)
 - The setup wizard writes **per-repo config** (issue tracker choice, label vocabulary, doc paths) — global install can't really make sense of that
-- Skills land under `.pi/skills/`, which is committed-friendly — you can review the diff
+- Skills land in `$SKILLS_DIR`, which is committed-friendly — you can review the diff
 - `CONTEXT.md` / `CONTEXT/*.md` / `ADR-*.md` artifacts are project-local files anyway
 - Keeps unrelated projects free of skill suggestions
 
 ## Avoid: global install
 
-Global install (drop `--agent pi` and don't pass `-g` to avoid project-level; or pass `-g` for `~/`) loads every skill into every session in every project, regardless of fit. Not recommended — the surface area is huge, and the setup wizard's per-repo config doesn't survive globally.
+Global install (drop `--agent` and don't pass `-g` to avoid project-level; or pass `-g` for `~/`) loads every skill into every session in every project, regardless of fit. Not recommended — the surface area is huge, and the setup wizard's per-repo config doesn't survive globally.
 
 ## Updating
 
@@ -115,8 +115,8 @@ This updates skills installed at the current scope (project if you're in one, el
 
 mattpocock/skills only writes project-local files:
 
-- `.pi/skills/<name>/SKILL.md` (and bundled assets)
+- `$SKILLS_DIR/<name>/SKILL.md` (and bundled assets)
 - `.agents/skills/<name>/` (mirror copy)
 - After `/skill:setup-matt-pocock-skills`: `.agents/<repo>/` config files (tracker choice, labels, doc layout)
 
-It does not touch your global `~/.pi/agent/`, model settings, theme, or other projects. Uninstall with `npx skills@latest remove <name>`.
+It does not touch your global `$AGENT_HOME`, model settings, theme, or other projects. Uninstall with `npx skills@latest remove <name>`.

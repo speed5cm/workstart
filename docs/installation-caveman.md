@@ -2,7 +2,7 @@
 
 > **Generic capability:** compress the agent's natural-language output (~65–75%) while keeping technical accuracy.
 >
-> **This page's implementation:** Pi (`.pi/skills/`). The installer's `--agent` flag is the runtime switch — point it at a different agent and the skill lands in that agent's directory instead.
+> **This page's implementation:** the `skills` CLI. The installer's `--agent` flag is the runtime switch — point it at a different agent and the skill lands in that agent's directory instead.
 
 > [caveman](https://github.com/juliusbrussee/caveman) is an ultra-compressed communication mode that cuts token usage ~75% while preserving technical accuracy. Six intensity levels, triggered by user keywords like "caveman mode" or `/caveman`.
 
@@ -11,10 +11,10 @@
 `cd` into the project directory, then run:
 
 ```
-npx skills add https://github.com/juliusbrussee/caveman --skill caveman --agent pi -y
+npx skills add https://github.com/juliusbrussee/caveman --skill caveman -y
 ```
 
-This installs the skill into the project's skill directory — with `--agent pi` that resolves to `.pi/skills/`.
+This installs the skill into the project's skill directory. Add `--agent <name>` to target one harness; omit it to install for every supported one.
 
 ## Usage
 

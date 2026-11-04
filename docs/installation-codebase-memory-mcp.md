@@ -2,7 +2,7 @@
 
 > **Generic capability:** index the repo into a persistent SQLite graph so the agent queries structure instead of grepping.
 >
-> **This page's implementation:** Pi. Only the config file (`.pi/mcp-adapter.json`) and the `AGENTS.md` wiring are Pi-specific — the server is a standalone binary speaking MCP, so another runtime reuses it as-is.
+> **This page's implementation:** generic. Only the MCP config file and the `AGENTS.md` wiring are runtime-specific — the server is a standalone binary speaking MCP, so every agent reuses it as-is.
 
 > [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) is a single static binary that indexes the codebase into a persistent SQLite knowledge graph — 158 languages, 14 MCP tools, millisecond queries. Like codegraph, it gives the agent one call for structured context instead of file-by-file crawling.
 
@@ -20,7 +20,7 @@ codebase-memory-mcp --version
 
 ## 2. Wire the MCP server into the project
 
-In the project root, create `.pi/mcp-adapter.json` if it does not exist. If it already exists, merge the `codebase-memory-mcp` entry into its existing `mcpServers` object instead of replacing the file. (`pi-mcp-adapter` never reads `.pi/mcp.json` — that file is reserved for Pi's built-in MCP support. The format is identical, so an existing `.pi/mcp.json` can simply be renamed.) The `environment.CBM_CACHE_DIR` entry redirects the SQLite index to a project-local directory:
+In the project root, create or update your agent's MCP config — `.mcp.json` is the common name, but put it wherever your agent looks. If the file already exists, merge the `codebase-memory-mcp` entry into its existing `mcpServers` object instead of replacing it. The `environment.CBM_CACHE_DIR` entry redirects the SQLite index to a project-local directory:
 
 ```json
 {
@@ -38,7 +38,7 @@ In the project root, create `.pi/mcp-adapter.json` if it does not exist. If it a
 
 The relative path `.codebase-memory/cache` resolves against the project root when the MCP server starts there.
 
-Restart the agent. Verify with `/mcp-adapter` — `codebase-memory-mcp` should be listed.
+Restart the agent. In the MCP listing (`/mcp` in Claude Code, or the equivalent) `codebase-memory-mcp` should appear.
 
 ## 3. Build the graph
 
@@ -92,6 +92,6 @@ The SQLite index is regenerable from source — never commit it. Add to the proj
 
 ## Recommendation: install at the project level
 
-- The SQLite index and the project's `.pi/mcp-adapter.json` stay scoped to the project that benefits from them
+- The SQLite index and the project's MCP config stay scoped to the project that benefits from them
 - `CBM_CACHE_DIR` redirects the global cache to project-local — keeps the index alongside the code it describes
 - Matches how codebase-memory-mcp is intended (per-project, not per-machine)

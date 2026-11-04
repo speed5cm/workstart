@@ -2,63 +2,69 @@
 
 > **Generic capability:** bootstrap an agent config directory, wire MCP servers, and write the global instruction file — three steps that almost every CLI agent repeats under different names.
 >
-> **This page's implementation:** Pi. `~/.pi/agent/` is Pi's config root and `pi` is its CLI; another runtime substitutes its own directory, its own installer, and its own instruction-file name, but the three steps keep the same shape.
+> **This page's implementation:** generic. Paths use `$AGENT_HOME` (the agent's config root) and `$SKILLS_DIR` (the project's skill directory); substitute your agent's own values. Only the directory names and the installer command change between agents — the three steps keep the same shape.
 
 Installs workstart on macOS, Linux, and Windows (via Git Bash / WSL).
 
 ## Prerequisites
 
-- [Pi](https://github.com/earendil-works/pi-mono#readme) installed and runnable as `pi`
+- An agent that loads a global instruction file and supports skills — Claude Code, Codex CLI, Cursor, OpenCode, WorkBuddy, or anything similar
 - Git installed
+- A bash shell. On Windows, install [Git for Windows](https://git-scm.com/download/win) and use Git Bash.
 
-> Pi requires a bash shell. On Windows, install [Git for Windows](https://git-scm.com/download/win) — pi auto-discovers Git Bash.
+## Step 0: Pick your config root
 
-If `pi` is not on your PATH yet, install it first:
+Every path below is written against `$AGENT_HOME`. Set it once per shell, to the directory your agent reads its global config from:
 
 ```bash
-npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+AGENT_HOME=~/.claude      # Claude Code
+# AGENT_HOME=~/.codex     # Codex CLI
+# AGENT_HOME=~/.workbuddy # WorkBuddy
+# AGENT_HOME=~/.config/opencode
 ```
 
-Then `pi --help` to confirm it works.
+If you don't know yours, run your agent once and look for the directory it created in `$HOME`, or check its docs. `echo $AGENT_HOME` before continuing — an empty value turns the commands below into writes at `/`.
+
+The optional guides also use `$SKILLS_DIR` for the **project's** skill directory (`.claude/skills`, `.agents/skills`, `.cursor/rules`, …). Same rule: it is whatever your agent scans, not a fixed path.
 
 ## Step 1: Install workstart
 
-workstart contains documentation only — no extensions, no settings, no skills. To preserve your existing config files, clone the repository into a temporary directory and copy only files that do not already exist into `~/.pi/agent`.
+workstart contains documentation only — no extensions, no settings, no skills. To preserve your existing config files, clone the repository into a temporary directory and copy only files that do not already exist into `$AGENT_HOME`.
 
-These commands are normally run from a separate terminal because they modify the configuration directory used by the current session.
+`$AGENT_HOME` only lives in the shell you set it in. Run the block below in that same shell — or paste the literal path in place of the variable.
 
-When this document is provided to an Agent with an explicit request to install workstart, the Agent may execute the commands automatically in the current session. Do not ask the user to confirm again. Do not move, delete, or replace `~/.pi/agent`; clone into a temporary directory and use `cp -an` so existing configuration files are preserved.
+When this document is provided to an Agent with an explicit request to install workstart, the Agent may execute the commands automatically in the current session. Do not ask the user to confirm again. Do not move, delete, or replace `$AGENT_HOME`; clone into a temporary directory and use `cp -an` so existing configuration files are preserved.
 
 ```bash
-mkdir -p ~/.pi/agent
+test -n "$AGENT_HOME" || { echo "set AGENT_HOME first"; exit 1; }
+mkdir -p "$AGENT_HOME"
 repo_dir="$(mktemp -d)"
 git clone https://github.com/speed5cm/workstart "$repo_dir"
-cp -an "$repo_dir"/. ~/.pi/agent/
+cp -an "$repo_dir"/. "$AGENT_HOME"/
 rm -rf "$repo_dir"
 ```
 
-Existing files such as `auth.json`, `models-store.json`, `settings.json`, and `sessions/` are preserved. If you do not have an existing config, the same commands create the directory and install the repository files.
+Existing files such as `auth.json`, `settings.json`, and `sessions/` are preserved. If you do not have an existing config, the same commands create the directory and install the repository files.
 
 ## Step 2: Install MCP Servers
 
 workstart expects three MCP servers in every session: `exa` (web search), `context7` (library docs), and `searchcode` (code search across public repos).
 
-First, install the MCP adapter:
+**If your agent speaks MCP natively**, add them with its own command or config file. Claude Code, for example:
 
 ```bash
-pi install npm:pi-mcp-adapter
+claude mcp add --transport http exa https://mcp.exa.ai/mcp
+claude mcp add --transport http context7 https://mcp.context7.com/mcp
+claude mcp add --transport http searchcode https://api.searchcode.com/v1/mcp
 ```
 
-Then create or update `~/.pi/agent/mcp-adapter.json` with these entries. If the file already contains other MCP servers, preserve them and merge these entries into its existing `mcpServers` object; do not replace the whole file. If the entries already exist, keep the existing configuration and avoid duplicates. Create `mcp-adapter.json` only when it does not exist.
-
-> **Do not use `mcp.json` here.** `~/.pi/agent/mcp.json` belongs to Pi's built-in MCP support and is never read by `pi-mcp-adapter`. The adapter owns `mcp-adapter.json` (format unchanged, so an existing `mcp.json` can be `mv`'d into place). Keeping the two files separate is what stops the runtime and the adapter from starting the same servers twice.
+Otherwise, most agents accept a JSON file with an `mcpServers` object. Where that file lives varies (`$AGENT_HOME/mcp.json`, a project-root `.mcp.json`, `~/.cursor/mcp.json`, …) — put it where your agent looks, and merge these entries into its existing `mcpServers` object if it already has one. Do not replace the whole file; do not duplicate entries that already exist.
 
 ```json
 {
   "mcpServers": {
     "exa": {
-      "url": "https://mcp.exa.ai/mcp",
-      "lifecycle": "eager"
+      "url": "https://mcp.exa.ai/mcp"
     },
     "context7": {
       "url": "https://mcp.context7.com/mcp"
@@ -70,13 +76,15 @@ Then create or update `~/.pi/agent/mcp-adapter.json` with these entries. If the 
 }
 ```
 
-> **Why `eager` for exa?** Web search is the first thing an agent reaches for in fresh sessions — kicking off the connection at startup (rather than waiting for the first tool call) means search results are ready by the time the agent actually needs them. The other two are `lazy` (default) since they only fire on explicit lookups.
 
-If you already configured MCPs in Cursor / Claude Code / Codex, prefer `/mcp-adapter setup` (in any session) to import them rather than hand-writing `mcp-adapter.json`.
+
+> **If your agent does not support MCP at all**, install an MCP adapter from its plugin or extension ecosystem first, then point that adapter at the config above. Keep the adapter's file and the agent's built-in MCP file separate where both exist — two files reading the same servers is how you end up starting each one twice.
+
+If you already configured MCPs in another agent, import them where the tooling allows rather than hand-writing the file.
 
 ## Step 3: Configure Agent Instructions
 
-Create `~/.pi/agent/AGENTS.md` with the following MCP instructions. If `AGENTS.md` already exists, append these instructions to the existing file rather than replacing it. If the same instructions are already present, do not duplicate them. `exa` is listed first because web search is commonly needed at the start of a fresh session:
+Create `$AGENT_HOME/AGENTS.md` with the following MCP instructions. If `AGENTS.md` already exists, append these instructions to the existing file rather than replacing it. If the same instructions are already present, do not duplicate them. `exa` is listed first because web search is commonly needed at the start of a fresh session:
 
 ```markdown
 ## MCP
@@ -86,20 +94,23 @@ Create `~/.pi/agent/AGENTS.md` with the following MCP instructions. If `AGENTS.m
 - Use searchcode to search and analyze public git repositories.
 ```
 
+Some agents read a differently named file (`CLAUDE.md`, `.cursor/rules`, `copilot-instructions.md`). Same layer, same content — use the name your agent discovers.
+
 ## Tip
 
-Core install is done. The rest of this document is optional add-ons, grouped into four categories:
+Core install is done. The rest of this document is optional add-ons, grouped into five categories:
 
 - **Token saving** — [rtk](https://github.com/rtk-ai/rtk), [caveman](https://github.com/JuliusBrussee/caveman)
 - **Agentic workflow** — [superpowers](https://github.com/obra/superpowers), [OpenSpec](https://github.com/Fission-AI/OpenSpec), [mattpocock/skills](https://github.com/mattpocock/skills)
 - **Explore** — [codegraph](https://github.com/colbymchenry/codegraph), [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)
+- **Design** — [hallmark](https://github.com/Nutlope/hallmark)
 - **Additional features** — [agent-browser](https://github.com/vercel-labs/agent-browser)
 
 Pick what fits your workflow, or skip straight to using the agent.
 
 ⭐ **If workstart is useful to you, consider giving it a star!**
 
-**GitHub: https://github.com/speed5cm/workstart**
+**GitHub: <https://github.com/speed5cm/workstart>**
 
 Before you start, take 5 minutes to read through:
 
@@ -126,6 +137,10 @@ workstart is meant to be understood, not just installed.
 
 - **[`docs/installation-codegraph.md`](installation-codegraph.md)** — pre-index codebase as a knowledge graph
 - **[`docs/installation-codebase-memory-mcp.md`](installation-codebase-memory-mcp.md)** — SQLite-backed knowledge graph
+
+**Design:**
+
+- **[`docs/installation-hallmark.md`](installation-hallmark.md)** — design skill with a hard floor and a real-browser lint
 
 **Additional features:**
 

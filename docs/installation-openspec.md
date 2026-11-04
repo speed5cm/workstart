@@ -2,9 +2,9 @@
 
 > **Generic capability:** turn a change into a spec, then into tasks, then into code, with an archive step — a workflow shape, not a runtime feature.
 >
-> **This page's implementation:** Pi (`openspec init --tools pi`). OpenSpec targets several agents; swap the `--tools` value (or pick from the interactive list) to write its skills and commands for a different one.
+> **This page's implementation:** `openspec init --tools <name>`. OpenSpec targets several agents; swap the `--tools` value (or pick from the interactive list) to write its skills and commands for yours.
 
-> [OpenSpec](https://github.com/Fission-AI/OpenSpec) is a spec-driven development tool for generating and managing project specifications. Pi is a first-class supported tool — pick it during `openspec init`.
+> [OpenSpec](https://github.com/Fission-AI/OpenSpec) is a spec-driven development tool for generating and managing project specifications. It ships integrations for several agents — pick yours during `openspec init`.
 
 ## Prerequisites
 
@@ -17,10 +17,10 @@ which openspec || npm install -g @fission-ai/openspec@latest
 `cd` into the project directory, then run:
 
 ```bash
-openspec init --tools pi
+openspec init --tools <your-agent>
 ```
 
-This bootstraps OpenSpec in your project with the selected tool integration. Skills land in `.pi/skills/openspec-*/` and slash commands in `.pi/prompts/opsx-*.md`.
+This bootstraps OpenSpec in your project with the selected tool integration. Skills land in `$SKILLS_DIR/openspec-*/` and slash commands wherever your agent reads them (`$AGENT_HOME/prompts/`, `.claude/commands/`, …).
 
 For interactive tool selection (also works):
 
@@ -28,7 +28,7 @@ For interactive tool selection (also works):
 openspec init
 ```
 
-…then choose `pi` from the list.
+…then choose your agent from the list.
 
 ## Usage
 
@@ -53,4 +53,4 @@ Global install loads spec tools into every session, cluttering the agent's conte
 
 ## Scope
 
-OpenSpec only writes project-local files (`.pi/skills/openspec-*/SKILL.md` and `.pi/prompts/opsx-*.md`). It does not touch your global `~/.pi/agent/`, model settings, or other projects.
+OpenSpec only writes project-local files (`$SKILLS_DIR/openspec-*/SKILL.md` plus the matching command files). It does not touch your global `$AGENT_HOME`, model settings, or other projects.

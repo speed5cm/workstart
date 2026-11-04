@@ -2,7 +2,7 @@
 
 > **Generic capability:** let the agent drive a real browser (open, click, fill, screenshot, read console/network) through Chrome DevTools Protocol.
 >
-> **This page's implementation:** Pi (`.pi/skills/`). `--agent pi` is the only runtime-specific part; the skill body and the CDP workflow are neutral.
+> **This page's implementation:** the `skills` CLI. Only the target directory is runtime-specific (`$SKILLS_DIR`, e.g. `.claude/skills/` or `.agents/skills/`); the skill body and the CDP workflow are neutral.
 
 > [agent-browser](https://github.com/vercel-labs/agent-browser) lets the agent control a browser via CDP (Chrome DevTools Protocol) — more token-efficient than traditional headless browser approaches.
 
@@ -19,10 +19,10 @@ which agent-browser || npm i -g agent-browser && agent-browser install
 `cd` into the project directory, then run:
 
 ```
-npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser --agent pi -y
+npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser -y
 ```
 
-This installs the skill into the project's skill directory — with `--agent pi` that resolves to `.pi/skills/`.
+This installs the skill into the project's skill directory. Add `--agent <name>` to target one harness (`claude-code`, `codex`, `cursor`, `opencode`, `github-copilot`); omit it to install for every supported one.
 
 ## Usage
 

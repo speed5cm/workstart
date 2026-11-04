@@ -2,7 +2,7 @@
 
 > **Generic capability:** rewrite verbose shell commands and their output into a token-cheap form before the agent reads them. Any agent that shells out benefits; the saving is in the output, not the agent. v1 optionally extends the same engine to provider-API traffic (compress payloads, route cheap calls to a cheaper model).
 >
-> **This page's implementation:** `rtk init -g --agent pi` — a TypeScript extension at `~/.pi/agent/extensions/rtk.ts`. rtk ships first-class targets for 18 agents (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Cline, OpenCode, …); only the `--agent` value changes. The optional proxy sits at the provider-API layer, so it is even less runtime-bound than the hook — but only `rtk claude` is wired for it today.
+> **This page's implementation:** `rtk init -g --agent <name>` — a hook file under the agent's config root (`$AGENT_HOME`). rtk ships first-class targets for 18 agents (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Cline, OpenCode, …); only the `--agent` value changes. The optional proxy sits at the provider-API layer, so it is even less runtime-bound than the hook — but only `rtk claude` is wired for it today.
 
 [rtk](https://github.com/rtk-ai/rtk) is a single Rust binary that intercepts shell commands and compresses their output before the agent reads it — 100+ commands covered, under 10 ms overhead, 60–90% smaller output on common commands and up to 90% on the noisiest ones.
 
@@ -20,8 +20,8 @@ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/instal
 
 ```bash
 rtk init -g                  # global; default target is Claude Code / Copilot
-rtk init -g --agent pi       # global, for Pi
 rtk init -g --agent cursor   # global, for Cursor
+rtk init -g --agent codex    # global, for Codex CLI
 ```
 
 `-g` / `--global` installs a hook that applies to every project — this is what rewrites commands.
