@@ -63,13 +63,14 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 | `agent-browser` | 用 CDP 控制真实浏览器 | `npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser -y` | [agent-browser](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-agent-browser.md) |
 | `hallmark` | 界面设计：硬底线 + 三个方向 + 真浏览器 lint，拒绝 AI 味 | `npx skills add nutlope/hallmark -y` | [hallmark](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-hallmark.md) |
 
-### CLI 工具 —— 靠宿主的拦截点生效
+### CLI 工具 —— 独立进程，agent 直接调用
 
-工具本身跟 agent 无关，但要让 agent「看见」改写后的输出，得挂在它的一个钩子上。`--agent` 选谁，就往谁的扩展机制里写一个壳；换 agent 是换个参数，不是重写。
+工具本身跟 agent 无关，区别只在 agent 怎么用上。`rtk` 要挂在宿主的拦截点上，agent 才「看见」改写后的输出 —— `--agent` 选谁，就往谁的扩展机制里写一个壳，换 agent 是换个参数，不是重写。`defuddle` 不用钩子，agent 自己敲命令，拿到的就已经是抽干净正文的 Markdown。
 
 | 名字 | 解决什么 | 装法 | 指南 |
 |---|---|---|---|
 | `rtk` | 把冗长的 shell 输出（`git status`、`pnpm list`、`vitest`、`cargo test`…）改写成紧凑形式，100+ 命令；18 个 agent 都有一等支持。v1 可再选装 proxy：压 provider 流量、把便宜调用路由到更便宜的模型 | `rtk init -g --agent <你的 agent>`（Claude Code 省掉 `--agent`） | [rtk](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-rtk.md) |
+| `defuddle` | 把网页抽成只剩正文的 Markdown（去导航、广告、评论、页脚），读网页时省掉整页噪声；Obsidian Web Clipper 的抽取引擎，可当 Readability 的更宽容替代 | `npm install -D defuddle`（项目内，用 `npx defuddle parse <url> --md` 调用） | [defuddle](https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-defuddle.md) |
 
 > 每条指南开头都有一行 `Generic capability` / `This page's implementation`：第一行说它解决的通用问题，第二行说哪些部分是某个 runtime 的实现细节。**判断能不能跨 agent 用，看第二行就够。**
 
@@ -149,6 +150,7 @@ workstart/
     ├── installation.md        ← 安装 / 备份 / 升级，含三个必装 MCP
     ├── installation-rtk.md    ← 可选：把 shell 输出改写成紧凑形式，省 token（全局）
     ├── installation-caveman.md   ← 可选：压缩 prose 输出，省 token（项目级）
+    ├── installation-defuddle.md   ← 可选：网页抽成纯正文 Markdown，读网页省 token（项目级）
     ├── installation-matt-pocock-skills.md   ← 可选：mattpocock/skills，写给真实工程师的 skill 集（项目级）
     ├── installation-superpowers.md  ← 可选：agentic workflow skills（项目级）
     ├── installation-openspec.md   ← 可选：spec-driven 开发工作流（项目级）
@@ -168,7 +170,7 @@ workstart/
 2. `workstart` 故意不附带任何配置。首次启动时，agent 会引导你设置 provider、model、theme —— 这一层不写进文档，交给你的 agent 自己完成。
 3. **先接 MCP** —— [exa、context7、searchcode](docs/installation.md) 是全局指令里那些"用 X 查文档"的落点。不接，`AGENTS.md` 里的话无从执行。这一层换 agent 只改配置文件位置，最值得先打通。
 4. **全局装 rtk** —— [rtk](docs/installation-rtk.md) 是清单里唯一值得无条件全局装的：它拦的是 shell 输出，每个项目都受益，没有副作用。装一次，所有会话都省。
-5. **按需装 skill，而且装项目级** —— [codegraph](docs/installation-codegraph.md) / [codebase-memory-mcp](docs/installation-codebase-memory-mcp.md) 看代码，[mattpocock/skills](docs/installation-matt-pocock-skills.md) 或 [superpowers](docs/installation-superpowers.md) 提供方法论，[OpenSpec](docs/installation-openspec.md) 走 spec-driven 开发，[caveman](docs/installation-caveman.md) 压缩 prose，[agent-browser](docs/installation-agent-browser.md) 控制浏览器，[hallmark](docs/installation-hallmark.md) 管界面长什么样。每个都只对你 `cd` 进去的项目生效。
+5. **按需装 skill，而且装项目级** —— [codegraph](docs/installation-codegraph.md) / [codebase-memory-mcp](docs/installation-codebase-memory-mcp.md) 看代码，[mattpocock/skills](docs/installation-matt-pocock-skills.md) 或 [superpowers](docs/installation-superpowers.md) 提供方法论，[OpenSpec](docs/installation-openspec.md) 走 spec-driven 开发，[caveman](docs/installation-caveman.md) 压缩 prose，[defuddle](docs/installation-defuddle.md) 抽网页正文，[agent-browser](docs/installation-agent-browser.md) 控制浏览器，[hallmark](docs/installation-hallmark.md) 管界面长什么样。每个都只对你 `cd` 进去的项目生效。
 6. **修改全局 `AGENTS.md`** —— 加你的语言偏好、工作风格、跨项目都适用的 MCP 用法提示。这一层换 agent 几乎可以照抄，投资回报最高。
 7. **在需要 `AGENTS.md` 的项目根加一份** —— 写项目结构、技术栈、编码规范。
 8. **写自己的 prompt 模板** —— 把重复流程做成斜杠命令（落点因 agent 而异：`$AGENT_HOME/prompts/`、`.claude/commands/` 等）。
@@ -217,7 +219,7 @@ workstart/
 
 ## 节省 token
 
-> 这一节是**最小的通用层**：不管哪个 agent，token 都是钱，压缩点的位置也就那么几个 —— 命令输出、自然语言输出，以及（rtk v1 的 proxy 之后）provider 请求体本身。两个工具的取舍也一样：**压缩有副作用就按项目开关，没有副作用才全局装。**
+> 这一节是**最小的通用层**：不管哪个 agent，token 都是钱，压缩点的位置也就那么几个 —— 命令输出（rtk）、自然语言输出（caveman）、**读进来的网页**（defuddle），以及（rtk v1 的 proxy 之后）provider 请求体本身。三个工具的取舍也一样：**压缩有副作用就按项目开关，没有副作用才全局装。**
 
 ### rtk
 
@@ -247,6 +249,27 @@ https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/instal
 Read the installation guide and follow it:
 https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-caveman.md
 ```
+
+### defuddle
+
+[defuddle](https://github.com/kepano/defuddle) 把任意网页抽成只剩正文的 Markdown：导航、Cookie 横幅、广告、相关链接、评论、订阅提示、页脚，都在 agent 读之前删掉；代码块保留语言，脚注、公式归一到标准形式，顺带给出 `title` / `author` / `published` / `wordCount` 等元数据。它是 Obsidian Web Clipper 的抽取引擎，也可当 Mozilla Readability 的更宽容替代。
+
+它不拦任何东西，省的是**读进来的那一层**：同一篇文章直接抓整页，噪声可能占掉大半 token；抽完只剩正文。
+
+建议**项目级别安装**。先 `cd` 到项目目录，`npm install -D defuddle`，再把下面这段粘贴到 agent 会话：
+
+```
+Read the installation guide and follow it:
+https://raw.githubusercontent.com/speed5cm/workstart/refs/heads/main/docs/installation-defuddle.md
+```
+
+装完在该项目的 `AGENTS.md` 里加一句，让它默认走这条路：
+
+```markdown
+- Fetch web pages with `npx defuddle parse <url> --md` instead of a plain fetch.
+```
+
+不装进项目依赖、每次直接 `npx defuddle` 也能跑，但那是现拉最新版——临时看一篇可以，日常流程不行：项目自己的 README 开头就写着 "very much a work in progress"，版本漂移会直接改变喂进 context 的正文。
 
 ---
 

@@ -100,7 +100,7 @@ Some agents read a differently named file (`CLAUDE.md`, `.cursor/rules`, `copilo
 
 Core install is done. The rest of this document is optional add-ons, grouped into five categories:
 
-- **Token saving** — [rtk](https://github.com/rtk-ai/rtk), [caveman](https://github.com/JuliusBrussee/caveman)
+- **Token saving** — [rtk](https://github.com/rtk-ai/rtk), [caveman](https://github.com/JuliusBrussee/caveman), [defuddle](https://github.com/kepano/defuddle)
 - **Agentic workflow** — [superpowers](https://github.com/obra/superpowers), [OpenSpec](https://github.com/Fission-AI/OpenSpec), [mattpocock/skills](https://github.com/mattpocock/skills)
 - **Explore** — [codegraph](https://github.com/colbymchenry/codegraph), [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)
 - **Design** — [hallmark](https://github.com/Nutlope/hallmark)
@@ -126,6 +126,7 @@ workstart is meant to be understood, not just installed.
 
 - **[`docs/installation-rtk.md`](installation-rtk.md)** — rewrite verbose `bash` commands (global)
 - **[`docs/installation-caveman.md`](installation-caveman.md)** — compress the agent's prose output
+- **[`docs/installation-defuddle.md`](installation-defuddle.md)** — strip web pages down to their main content as Markdown (project-level)
 
 **Agentic workflow:**
 
